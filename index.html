@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Belutti</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./css/global.css">
 </head>
 <body>
 
@@ -21,36 +21,53 @@
             <nav class="nav-menu">
                 <ul>
                     <li><a href="index.html">Início</a></li>
-                    <li><a href="camisas.html">Camisas</a></li>
-                    <li><a href="moletons.html">Moletons</a></li>
+                    <li><a href="./pages/produtos/camisas.html">Camisas</a></li>
+                    <li><a href="./pages/produtos/moletons.html">Moletons</a></li>
                     <li><a href="#">Calças</a></li>
                     <li><a href="#">Acessórios</a></li>
                 </ul>
             </nav>
             
             <!-- Barra de Busca -->
-            <div class="search-bar">
-                <input type="text" placeholder="O que você está buscando?">
-                <button><i class="fas fa-search"></i></button>
-            </div>
+<div class="search-bar" style="position: relative;">
+    <input type="text" id="searchInput" placeholder="O que você está buscando?" autocomplete="off">
+    <button id="searchBtn"><i class="fas fa-search"></i></button>
+    
+    <!-- Dropdown de Termos Mais Pesquisados -->
+    <div id="searchDropdown" class="search-dropdown">
+        <div class="search-dropdown-header">
+            <i class="fas fa-fire"></i> Termos mais pesquisados
+        </div>
+        <div class="trending-tags" id="trendingTags">
+            <button type="button" class="trending-tag" data-term="Camisa Manga Longa">Camisa Manga Longa</button>
+            <button type="button" class="trending-tag" data-term="Camisa em Linho">Camisa em Linho</button>
+            <button type="button" class="trending-tag" data-term="Moletom">Casaco Moletom</button>
+            <button type="button" class="trending-tag" data-term="Baggy">Calça Baggy</button>
+            <button type="button" class="trending-tag" data-term="Regata">Regata Canelada</button>
+        </div>
+    </div>
+</div>
 
             <!-- Ações do Usuário (Login e Carrinho) -->
-            <div class="header-actions">
-                <div class="action-item">
-                    <i class="far fa-user"></i>
-                    <div>
-                        <strong>Login</strong> /<br>
-                        <span style="font-size: 12px;">Cadastre-se</span>
-                    </div>
-                </div>
-                <div class="action-item">
-                    <i class="fas fa-shopping-bag"></i>
-                    <div>
-                        <strong>Carrinho (0)</strong><br>
-                        <span style="font-size: 12px;">R$0,00</span>
-                    </div>
-                </div>
-            </div>
+            <!-- Ações do Usuário (Login e Carrinho) -->
+<div class="header-actions">
+    <!-- ADICIONE O ID "userMenu" NESTA DIV ABAIXO -->
+    <div class="action-item" id="userMenu">
+        <i class="far fa-user"></i>
+        <div>
+            <a href="./pages/auth/login.html"> <strong>Login</strong> /<br> </a>
+            <a href="./pages/auth/cadastro.html"> <span style="font-size: 12px;">Cadastre-se</span> </a>
+        </div>
+    </div>
+    
+    <div class="action-item" id="cartMenu" style="cursor: pointer;">
+    <i class="fas fa-shopping-bag"></i>
+    <div>
+        <strong id="cartCount">Carrinho (0)</strong><br>
+        <span id="cartTotal" style="font-size: 12px;">R$0,00</span>
+    </div>
+</div>
+</div>
         </div>
     </header>
 
@@ -163,14 +180,14 @@
         <div class="banner-item" style="background-image: url('img/banner_camisa.jpeg');">
             <div class="banner-content">
                 <h2>CAMISAS</h2>
-                <a href="camisas.html" class="btn-white">Ver novidades</a>
+                <a href="./pages/produtos/camisas.html" class="btn-white">Ver novidades</a>
             </div>
         </div>
         
         <div class="banner-item" style="background-image: url('img/banner_moletons.jpeg');">
             <div class="banner-content">
                 <h2>MOLETONS</h2>
-                <a href="moletons.html" class="btn-white">Ver coleção</a>
+                <a href="./pages/produtos/moletons.html" class="btn-white">Ver coleção</a>
             </div>
         </div>
     </section>
@@ -253,6 +270,11 @@
     </div>
 
     <!-- Scripts -->
-    <script src="script.js"></script>
+     <script src="./js/core/config.js"></script>
+    <script src="./js/core/main.js"></script>
+    <script src="./js/core/auth.js"></script>
+    <script src="./js/core/cart.js"></script>
+    <script src="./js/core/search.js"></script>
+    <script src="./js/core/catalog.js"></script>
 </body>
 </html>

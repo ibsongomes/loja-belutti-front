@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Belutti</title>
+    <link rel="stylesheet" href="../../css/auth.css"> <!-- Certifique-se de que o caminho do CSS está correto -->
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Entrar na Belutti</h2>
+            <p>Bem-vindo de volta! Faça login para acessar sua conta.</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                
+                <div class="form-actions">
+                    <a href="./recuperar-senha.html" class="forgot-password">Esqueceu a senha?</a>
+                </div>
+                
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+            
+            <p class="register-link">Ainda não tem conta? <a href="./cadastro.html">Cadastre-se</a></p>
+        </div>
+    </div>
+
+    <script src="../../js/core/config.js"></script>
+    <script src="../../js/pages/login.js"></script>
+</body>
+</html>

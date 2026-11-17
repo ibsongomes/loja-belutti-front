@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camisas - BELUTTI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/catalogo.css">
+</head>
+<body>
+
+    <!-- ==========================================
+         CABEÇALHO PRINCIPAL (Idêntico ao index)
+    =========================================== -->
+    <header>
+        <div class="header-main">
+            <!-- Logotipo -->
+            <a href="../../index.html" class="logo">BELUTTI</a>
+
+            <!-- Menu de Navegação -->
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="../../index.html">Início</a></li>
+                    <li><a href="camisas.html">Camisas</a></li>
+                    <li><a href="moletons.html">Moletons</a></li>
+                    <li><a href="#">Calças</a></li>
+                    <li><a href="#">Acessórios</a></li>
+                </ul>
+            </nav>
+            
+            <!-- Barra de Busca -->
+            <div class="search-bar">
+                <input type="text" placeholder="O que você está buscando?">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <!-- Ações do Usuário (Login e Carrinho) -->
+            <div class="header-actions">
+                <div class="action-item">
+                    <i class="far fa-user"></i>
+                    <div>
+                        <strong>Login</strong> /<br>
+                        <span style="font-size: 12px;">Cadastre-se</span>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <i class="fas fa-shopping-bag"></i>
+                    <div>
+                        <strong>Carrinho (0)</strong><br>
+                        <span style="font-size: 12px;">R$0,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         CONTEÚDO DA PÁGINA (CATÁLOGO)
+    =========================================== -->
+    <div class="container">
+        
+    <!-- BARRA LATERAL (Filtros Novos) -->
+    <!-- BARRA LATERAL (Filtros) -->
+        <!-- BARRA LATERAL (Filtros) -->
+        <aside class="sidebar">
+            <!-- Filtro de Modelagem (NOVO) -->
+            <div class="filter-group">
+                <h3 class="filter-toggle">Modelagem <i class="fas fa-chevron-up"></i></h3>
+                <div class="filter-content">
+                    <label class="filter-item"><input type="checkbox" value="regular" class="modelagem-checkbox"> Regular / Tradicional</label>
+                    <label class="filter-item"><input type="checkbox" value="slim" class="modelagem-checkbox"> Slim Fit</label>
+                    <label class="filter-item"><input type="checkbox" value="oversized" class="modelagem-checkbox"> Oversized</label>
+                    <label class="filter-item"><input type="checkbox" value="manga-longa" class="modelagem-checkbox"> Manga Longa</label>
+                </div>
+            </div>
+
+            <!-- Filtro de Cores -->
+            <div class="filter-group">
+                <h3 class="filter-toggle">Cores <i class="fas fa-chevron-up"></i></h3>
+                <div class="filter-content">
+                    <div class="color-grid">
+                        <div class="color-item" data-cor="preto"><span class="color-swatch" style="background: #1a1a1a;"></span> Preto</div>
+                        <div class="color-item" data-cor="branco"><span class="color-swatch" style="background: #ffffff; border: 1px solid #ddd;"></span> Branco</div>
+                        <div class="color-item" data-cor="azul"><span class="color-swatch" style="background: #1a365d;"></span> Azul</div>
+                        <div class="color-item" data-cor="marrom"><span class="color-swatch" style="background: #5c4033;"></span> Marrom</div>
+                        <div class="color-item" data-cor="rosa"><span class="color-swatch" style="background: #ffb6c1;"></span> Rosa</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtro de Preço -->
+            <div class="filter-group">
+                <h3 class="filter-toggle">Preço <i class="fas fa-chevron-up"></i></h3>
+                <div class="filter-content">
+                    <div class="price-slider-container">
+                        <div class="slider-track"></div>
+                        <input type="range" min="0" max="200" value="0" id="slider-min" class="range-input">
+                        <input type="range" min="0" max="200" value="200" id="slider-max" class="range-input">
+                    </div>
+                    <div class="price-values">
+                        <span id="price-min-val">R$ 0</span> - <span id="price-max-val">R$ 200</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ÁREA CENTRAL (Lista de Produtos) -->
+        <main class="main-content">
+            
+            <div class="plp-header">
+                <span id="resultado-count">Exibindo: 3 resultados</span>
+                <div>
+                    <label>Ordenar por: </label>
+                    <!-- Adicionamos o ID e os values em cada option -->
+                    <select id="ordenar-produtos">
+                        <option value="populares">Mais Populares</option>
+                        <option value="menor">Menor preço</option>
+                        <option value="maior">Maior preço</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- O <div class="product-grid" id="productGrid"> continua logo aqui abaixo normalmente -->
+
+        <div class="product-grid" id="productGrid">
+                <!-- Produto 1 -->
+                <div class="product-card" data-cor="azul" data-preco="79.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-azul-linho.jpg" alt="Camisa">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa em Linho Azul-Marinho</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                        <div class="price-current">R$ 79,90</div>
+                        <div class="installment">ou 3x de R$ 26,69 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 2 -->
+                <div class="product-card" data-cor="marrom" data-preco="79.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa_marrom-linho.jpg" alt="Camisa 2">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa em Linho Marrom</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="price-current">R$ 79,90</div>
+                        <div class="installment">ou 3x de R$ 26,69 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 3 -->
+                <div class="product-card" data-cor="branco" data-preco="79.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-off-white-linho.jpg" alt="Camisa 3">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa em Linho Off-White</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                        <div class="price-current">R$ 79,90</div>
+                        <div class="installment">ou 3x de R$ 26,69 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 4 -->
+                <div class="product-card" data-cor="preto" data-preco="69.90" data-modelagem="slim">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-marrom-malha-cotton.jpeg" alt="Camisa Malha Cotton Marrom">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Malha Cotton Marrom</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="price-current">R$ 69,90</div>
+                        <div class="installment">ou 3x de R$ 23,30 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 5 -->
+                <div class="product-card" data-cor="rosa" data-preco="69.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-preta-malha-cotton.jpeg" alt="Camisa Polo Rosa">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Malha Cotton Preto</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                        <div class="price-current">R$ 69,90</div>
+                        <div class="installment">ou 2x de R$ 23,30 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 6 -->
+                <div class="product-card" data-cor="branco" data-preco="69.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-vermelha-malha-cotton.jpeg" alt="Camisa Malha Cotton Vermelho">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Malha Cotton Vermelho</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                        <div class="price-current">R$ 69,90</div>
+                        <div class="installment">ou 3x de R$ 23,30 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 7 -->
+                <div class="product-card" data-cor="azul" data-preco="69.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-verde-malha-cotton.jpeg" alt="Camisa Malha Cotton Verde">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Malha Cotton Verde</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="price-current">R$ 69,90</div>
+                        <div class="installment">ou 4x de R$ 23,30 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 8 -->
+                <div class="product-card" data-cor="marrom" data-preco="69.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-azul-tricot.jpeg" alt="Camisa de Tricot Azul">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa de Tricot Azul</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i></div>
+                        <div class="price-current">R$ 69,90</div>
+                        <div class="installment">ou 2x de R$ 34,95 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 9 -->
+                <div class="product-card" data-cor="preto" data-preco="129.90" data-modelagem="manga-longa">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-preta-tricot.jpeg" alt="Camisa Manga Longa Preta">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Manga Longa Preta</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="price-current">R$ 129,90</div>
+                        <div class="installment">ou 3x de R$ 43,30 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 10 -->
+                <div class="product-card" data-cor="branco" data-preco="99.90" data-modelagem="slim">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-vermelha-tricot.jpeg" alt="Camisa Branca Minimalista">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Branca Minimalista</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="price-current">R$ 99,90</div>
+                        <div class="installment">ou 3x de R$ 33,30 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 11 -->
+                <div class="product-card" data-cor="azul" data-preco="139.90" data-modelagem="manga-longa">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-azul-manga-longa.jpeg" alt="Camisa Manga Longa Azul">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Manga Longa Azul</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                        <div class="price-current">R$ 139,90</div>
+                        <div class="installment">ou 3x de R$ 46,63 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 12 -->
+                <div class="product-card" data-cor="rosa" data-preco="79.90" data-modelagem="regular">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-marrom-manga-longa.jpeg" alt="Camiseta Básica Rosa Salmão">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camiseta Básica Rosa Salmão</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                        <div class="price-current">R$ 79,90</div>
+                        <div class="installment">ou 2x de R$ 39,95 sem juros</div>
+                    </div>
+                </div>
+
+                <!-- Produto 13 -->
+                <div class="product-card" data-cor="marrom" data-preco="159.90" data-modelagem="manga-longa">
+                    <div class="product-image">
+                        <button class="btn-wishlist"><i class="far fa-heart"></i></button>
+                        <img src="../../img/camisa-preta-manga-longa.jpeg" alt="Camisa Manga Longa Preto">
+                    </div>
+                    <div class="product-info">
+                        <h3>Camisa Manga Longa Preto</h3>
+                        <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                        <div class="price-current">R$ 159,90</div>
+                        <div class="installment">ou 3x de R$ 53,30 sem juros</div>
+                    </div>
+                </div>
+            </div>
+    </main>
+</div>
+
+    <!-- ==========================================
+         RODAPÉ (FOOTER)
+    =========================================== -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <!-- Coluna 1: A Marca -->
+            <div class="footer-col brand-col">
+                <h2>BELUTTI</h2>
+                <p>A Belutti surgiu com o propósito de levar moda masculina com estilo, atitude e personalidade. Reunimos peças que combinam conforto e versatilidade para acompanhar você em diferentes momentos.</p>
+                <p><strong>BELUTTI — Vista seu estilo.</strong></p>
+            </div>
+
+            <!-- Coluna 2: Links Institucionais -->
+            <div class="footer-col links-col">
+                <h3>Institucional</h3>
+                <ul>
+                    <li><a href="#" class="open-sidebar" data-target="quem-somos">Quem Somos</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="privacidade">Política de Privacidade</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="termos">Termos de Uso</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="trocas">Trocas e Devoluções</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="prazos">Prazos de Entrega</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="faq">Perguntas Frequentes (FAQ)</a></li>
+                </ul>
+            </div>
+
+            <!-- Coluna 3: Fale Conosco e Newsletter -->
+            <div class="footer-col contact-col">
+                <h3>Fale Conosco</h3>
+                <p>Tem alguma dúvida, sugestão ou precisa de ajuda? Estamos aqui para ajudar!</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="E-mail">
+                    <button>Enviar</button>
+                </div>
+            </div>
+
+            <!-- Coluna 4: Segurança e Pagamento -->
+            <div class="footer-col security-col">
+                <h3>Formas de Pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-pix"></i>
+                </div>
+                
+                <h3 style="margin-top: 25px;">Segurança</h3>
+                <div class="security-badge">
+                    <i class="fas fa-lock"></i> <span>Site Seguro - SSL</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>criado com Nuvemshop | Copyright Belutti - 2026. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         PAINEL LATERAL (OFFCANVAS)
+    =========================================== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="sidebar-panel" id="sidebarPanel">
+        <div class="sidebar-header">
+            <h3 id="sidebarTitle">Título</h3>
+            <button class="sidebar-close" id="sidebarClose">&times;</button>
+        </div>
+        <div class="sidebar-content" id="sidebarContent">
+            <!-- O texto aparecerá aqui dentro via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Script para o menu lateral funcionar nesta página também -->
+    <script src="../../js/core/main.js"></script>
+    <script src="../../js/core/auth.js"></script>
+</body>
+</html>

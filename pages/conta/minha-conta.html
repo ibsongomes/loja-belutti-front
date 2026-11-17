@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta - Belutti</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/global.css">
+    <style>
+        .account-wrapper { max-width: 1100px; margin: 40px auto; padding: 0 20px; display: flex; gap: 30px; min-height: 60vh; }
+        .account-sidebar { width: 260px; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); height: fit-content; }
+        .account-sidebar h3 { margin: 0 0 20px 0; font-size: 18px; color: #1A1A1A; border-bottom: 1px solid #eee; padding-bottom: 12px; }
+        .account-nav { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+        .account-nav button { width: 100%; text-align: left; padding: 12px 15px; background: none; border: none; border-radius: 6px; font-size: 14px; color: #444; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .account-nav button:hover, .account-nav button.active { background: #F8F5F2; color: #1A1A1A; font-weight: bold; }
+        .account-nav button.danger { color: #c0392b; margin-top: 10px; border-top: 1px solid #eee; padding-top: 16px; border-radius: 0; }
+        .account-content { flex: 1; background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .order-card { border: 1px solid #e5e5e5; border-radius: 6px; padding: 20px; margin-bottom: 15px; }
+        .order-header { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 12px; font-size: 14px; }
+        .order-item-row { display: flex; justify-content: space-between; font-size: 14px; color: #555; margin-bottom: 6px; }
+        
+        .form-grid { display: flex; flex-direction: column; gap: 15px; max-width: 680px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1.5fr 1fr; gap: 14px; }
+        .form-grid label { font-size: 13px; font-weight: bold; color: #1A1A1A; display: block; margin-bottom: 5px; }
+        .form-grid input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        .form-grid input:disabled { background: #ececec; color: #777; cursor: not-allowed; border-color: #dcdcdc; }
+        .section-divider { font-size: 13px; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 4px 0; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+        .cep-helper { display: inline-block; font-size: 12px; color: #1A1A1A; text-decoration: underline; margin-top: 5px; }
+
+        @media (max-width: 768px) {
+            .account-wrapper { flex-direction: column; }
+            .account-sidebar { width: 100%; box-sizing: border-box; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body style="background-color: #F8F5F2;">
+
+    <header>
+        <div class="header-main">
+            <a href="../../index.html" class="logo">BELUTTI</a>
+
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="../../index.html">Início</a></li>
+                    <li><a href="../produtos/camisas.html">Camisas</a></li>
+                    <li><a href="../produtos/moletons.html">Moletons</a></li>
+                    <li><a href="#">Calças</a></li>
+                    <li><a href="#">Acessórios</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="action-item" id="userMenu">
+                    <i class="far fa-user"></i>
+                    <div>
+                        <a href="../auth/login.html"> <strong>Login</strong> /<br> </a>
+                        <a href="../auth/cadastro.html"> <span style="font-size: 12px;">Cadastre-se</span> </a>
+                    </div>
+                </div>
+                
+                <div class="action-item" id="cartMenu" style="cursor: pointer;">
+                    <i class="fas fa-shopping-bag"></i>
+                    <div>
+                        <strong id="cartCount">Carrinho (0)</strong><br>
+                        <span id="cartTotal" style="font-size: 12px;">R$0,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="account-wrapper">
+        <aside class="account-sidebar">
+            <h3 id="sidebarGreeting">Minha Conta</h3>
+            <ul class="account-nav">
+                <li><button class="tab-btn active" data-tab="orders"><i class="fas fa-box-open"></i> Meus Pedidos</button></li>
+                <li><button class="tab-btn" data-tab="profile"><i class="far fa-id-card"></i> Dados de Cadastro</button></li>
+                <li><button id="switchAccountBtn"><i class="fas fa-exchange-alt"></i> Trocar de Conta</button></li>
+                <li><button id="logoutAccountBtn" class="danger"><i class="fas fa-sign-out-alt"></i> Sair da Conta</button></li>
+                <li><button id="deleteAccountBtn" class="danger" style="border-top: none; padding-top: 8px;"><i class="fas fa-trash-alt"></i> Excluir Minha Conta</button></li></ul>
+        </aside>
+
+        <section class="account-content">
+            <!-- ABA 1: HISTÓRICO DE PEDIDOS -->
+            <div id="tab-orders" class="tab-panel active">
+                <h2 style="margin-top: 0; color: #1A1A1A;">Histórico de Compras</h2>
+                <div id="ordersList"><p style="color: #666;">Carregando seus pedidos...</p></div>
+            </div>
+
+            <!-- ABA 2: DADOS DE CADASTRO E ENDEREÇO -->
+            <div id="tab-profile" class="tab-panel">
+                <h2 style="margin-top: 0; color: #1A1A1A;">Meus Dados</h2>
+                <form id="updateProfileForm" class="form-grid">
+                    <div class="section-divider">Dados Pessoais</div>
+
+                    <div>
+                        <label for="editName">* Nome Completo</label>
+                        <input type="text" id="editName" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div>
+                            <label for="editCpf">CPF (Não alterável)</label>
+                            <input type="text" id="editCpf" disabled>
+                        </div>
+                        <div>
+                            <label for="editBirthDate">Data de Nascimento (Não alterável)</label>
+                            <input type="text" id="editBirthDate" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div>
+                            <label for="editEmail">* E-mail</label>
+                            <input type="email" id="editEmail" required>
+                        </div>
+                        <div>
+                            <label for="editPassword">Nova Senha (opcional)</label>
+                            <input type="password" id="editPassword" minlength="6" placeholder="Deixe vazio para manter">
+                        </div>
+                    </div>
+
+                    <div class="section-divider">Endereço de Entrega</div>
+
+                    <div class="form-row">
+                        <div>
+                            <label for="editCep">* CEP</label>
+                            <input type="text" id="editCep" required placeholder="00000-000" maxlength="9">
+                            <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" rel="noopener noreferrer" class="cep-helper">
+                                Não sei meu CEP
+                            </a>
+                        </div>
+                        <div>
+                            <label for="editStreet">* Logradouro / Endereço</label>
+                            <input type="text" id="editStreet" required disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div>
+                            <label for="editNumber">* Número</label>
+                            <input type="text" id="editNumber" required>
+                        </div>
+                        <div>
+                            <label for="editComplement">Complemento (opcional)</label>
+                            <input type="text" id="editComplement" placeholder="Apto, Bloco...">
+                        </div>
+                        <div>
+                            <label for="editNeighborhood">* Bairro</label>
+                            <input type="text" id="editNeighborhood" required disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div>
+                            <label for="editState">* Estado</label>
+                            <input type="text" id="editState" required disabled>
+                        </div>
+                        <div>
+                            <label for="editCity">* Cidade</label>
+                            <input type="text" id="editCity" required disabled>
+                        </div>
+                        <div>
+                            <label for="editReference">Ponto de referência (opcional)</label>
+                            <input type="text" id="editReference" placeholder="Ex: Próximo à praça">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top: 10px; max-width: 240px;">Salvar Alterações</button>
+                    <p id="profileFeedback" style="font-size: 14px; font-weight: bold; margin: 0;"></p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Painel lateral do carrinho -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-panel" id="sidebarPanel">
+        <div class="sidebar-header">
+            <h3 id="sidebarTitle">Sua Sacola</h3>
+            <button class="sidebar-close" id="sidebarClose">&times;</button>
+        </div>
+        <div class="sidebar-content" id="sidebarContent"></div>
+    </div>
+
+    <script src="../../js/core/config.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="../../js/core/auth.js"></script>
+    <script src="../../js/core/cart.js"></script>
+    <script src="../../js/pages/minha-conta.js"></script>
+</body>
+</html>
