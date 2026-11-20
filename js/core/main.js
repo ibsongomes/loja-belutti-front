@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* =========================================
-       2. SISTEMA DE FILTROS (CORES, PREÇO E MODELAGEM)
+       2. SISTEMA DE FILTROS (CORES, PREÇO EXATO E MODELO)
     ========================================= */
     const sliderMin = document.getElementById('slider-min');
     const sliderMax = document.getElementById('slider-max');
@@ -286,35 +286,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayMax = document.getElementById('price-max-val');
     const track = document.querySelector('.slider-track');
 
-    const colorItems = document.querySelectorAll('.color-item');
-    const modelagemCheckboxes = document.querySelectorAll('.modelagem-checkbox');
     const resultCount = document.getElementById('resultado-count');
     const gridProdutos = document.getElementById('productGrid');
 
     let corAtiva = null;
 
+    function formatBRL(val) {
+        return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
     function atualizarSlider() {
         if (!sliderMin || !sliderMax) return;
 
-        let minVal = parseInt(sliderMin.value);
-        let maxVal = parseInt(sliderMax.value);
-        const maxLimit = parseInt(sliderMax.max);
+        let minVal = parseFloat(sliderMin.value);
+        let maxVal = parseFloat(sliderMax.value);
+        const minLimit = parseFloat(sliderMin.min);
+        const maxLimit = parseFloat(sliderMax.max);
+        const rangeSpan = maxLimit - minLimit || 1;
 
-        if (maxVal - minVal < 10) {
-            if (this && this.id === 'slider-min') sliderMin.value = maxVal - 10;
-            else sliderMax.value = minVal + 10;
-            minVal = parseInt(sliderMin.value);
-            maxVal = parseInt(sliderMax.value);
+        if (maxVal - minVal < 5 && rangeSpan >= 5) {
+            if (this && this.id === 'slider-min') sliderMin.value = (maxVal - 5).toFixed(2);
+            else sliderMax.value = (minVal + 5).toFixed(2);
+            minVal = parseFloat(sliderMin.value);
+            maxVal = parseFloat(sliderMax.value);
         }
 
-        if (displayMin) displayMin.textContent = `R$ ${minVal}`;
-        if (displayMax) displayMax.textContent = `R$ ${maxVal}`;
+        if (displayMin) displayMin.textContent = formatBRL(minVal);
+        if (displayMax) displayMax.textContent = formatBRL(maxVal);
 
-        const percentMin = (minVal / maxLimit) * 100;
-        const percentMax = (maxVal / maxLimit) * 100;
+        const percentMin = ((minVal - minLimit) / rangeSpan) * 100;
+        const percentMax = ((maxVal - minLimit) / rangeSpan) * 100;
         if (track) {
-            track.style.left = percentMin + "%";
-            track.style.right = (100 - percentMax) + "%";
+            track.style.left = Math.max(0, percentMin) + "%";
+            track.style.right = Math.max(0, 100 - percentMax) + "%";
         }
         window.filtrarProdutos();
     }
@@ -324,13 +328,14 @@ document.addEventListener('DOMContentLoaded', () => {
         sliderMax.addEventListener('input', atualizarSlider);
     }
 
-    colorItems.forEach(item => {
+    // Bind nas cores
+    document.querySelectorAll('.color-item').forEach(item => {
         item.addEventListener('click', () => {
             if (item.classList.contains('active')) {
                 item.classList.remove('active');
                 corAtiva = null;
             } else {
-                colorItems.forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.color-item').forEach(c => c.classList.remove('active'));
                 item.classList.add('active');
                 corAtiva = item.getAttribute('data-cor');
             }
@@ -338,18 +343,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    modelagemCheckboxes.forEach(checkbox => {
+    // Bind nos checkboxes de modelo
+    document.querySelectorAll('.modelagem-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', () => window.filtrarProdutos());
     });
+
+    // Ajusta automaticamente os limites do filtro de preço e visibilidade de cores/modelos existentes
+    window.initDynamicCatalogFilters = function(products) {
+        if (!products || products.length === 0) return;
+
+        // 1. Ajusta slider de preço para o menor e maior valor real das peças atuais
+        if (sliderMin && sliderMax) {
+            const prices = products.map(p => parseFloat(p.price));
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+
+            sliderMin.min = minPrice;
+            sliderMin.max = maxPrice;
+            sliderMin.value = minPrice;
+
+            sliderMax.min = minPrice;
+            sliderMax.max = maxPrice;
+            sliderMax.value = maxPrice;
+
+            atualizarSlider();
+        }
+
+        // 2. Oculta filtros de cor/modelo que não têm nenhum produto na categoria atual
+        const cards = Array.from(document.querySelectorAll('.product-card'));
+        const availableColors = new Set(cards.map(c => c.getAttribute('data-cor')));
+        const availableModels = new Set(cards.map(c => c.getAttribute('data-modelagem')));
+
+        document.querySelectorAll('.color-item').forEach(el => {
+            const cor = el.getAttribute('data-cor');
+            el.style.display = availableColors.has(cor) ? '' : 'none';
+        });
+
+        document.querySelectorAll('.modelagem-checkbox').forEach(cb => {
+            const label = cb.closest('.filter-item');
+            if (label) {
+                label.style.display = availableModels.has(cb.value) ? '' : 'none';
+            }
+        });
+
+        window.filtrarProdutos();
+    };
 
     window.filtrarProdutos = function () {
         const produtos = document.querySelectorAll('.product-card');
         if (!sliderMin || !sliderMax) return;
 
-        const precoMin = parseInt(sliderMin.value);
-        const precoMax = parseInt(sliderMax.value);
+        const precoMin = parseFloat(sliderMin.value);
+        const precoMax = parseFloat(sliderMax.value);
 
-        const modelagensMarcadas = Array.from(modelagemCheckboxes)
+        const modelagensMarcadas = Array.from(document.querySelectorAll('.modelagem-checkbox'))
             .filter(cb => cb.checked)
             .map(cb => cb.value);
 
@@ -360,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const corProduto = produto.getAttribute('data-cor');
             const modelagemProduto = produto.getAttribute('data-modelagem');
 
-            const passaPreco = precoProduto >= precoMin && precoProduto <= precoMax;
+            const passaPreco = precoProduto >= (precoMin - 0.01) && precoProduto <= (precoMax + 0.01);
             const passaCor = corAtiva === null || corAtiva === corProduto;
             const passaModelagem = modelagensMarcadas.length === 0 || modelagensMarcadas.includes(modelagemProduto);
 
@@ -377,14 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Sincroniza automaticamente quando o catalog.js renderiza os produtos vindos do banco
-    if (gridProdutos && sliderMin && sliderMax) {
-        const gridObserver = new MutationObserver(() => {
-            window.filtrarProdutos();
-        });
-        gridObserver.observe(gridProdutos, { childList: true });
-    }
-
     /* =========================================
        3. RECOLHER/EXPANDIR FILTROS (SETINHAS)
     ========================================= */
@@ -397,29 +436,48 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /* =========================================
-       4. ORDENAÇÃO DE PRODUTOS (MENOR/MAIOR PREÇO)
+       4. ORDENAÇÃO DE PRODUTOS (PADRÃO, POPULARES, MENOR/MAIOR)
     ========================================= */
     const sortSelect = document.getElementById('ordenar-produtos');
+    const clearSortBtn = document.getElementById('clearSortBtn');
+
+    function applyProductSorting() {
+        if (!sortSelect || !gridProdutos) return;
+
+        const listaProdutos = Array.from(document.querySelectorAll('.product-grid .product-card'));
+        const valor = sortSelect.value;
+        let produtosReordenados = [...listaProdutos];
+
+        if (clearSortBtn) {
+            clearSortBtn.style.display = valor !== 'padrao' ? 'inline-block' : 'none';
+        }
+
+        if (valor === 'populares') {
+            produtosReordenados.sort((a, b) => (parseInt(b.getAttribute('data-sold')) || 0) - (parseInt(a.getAttribute('data-sold')) || 0));
+        } else if (valor === 'menor') {
+            produtosReordenados.sort((a, b) => parseFloat(a.getAttribute('data-preco')) - parseFloat(b.getAttribute('data-preco')));
+        } else if (valor === 'maior') {
+            produtosReordenados.sort((a, b) => parseFloat(b.getAttribute('data-preco')) - parseFloat(a.getAttribute('data-preco')));
+        } else {
+            // Padrão: restaura ordem original do catálogo (ID)
+            produtosReordenados.sort((a, b) => (parseInt(a.getAttribute('data-id')) || 0) - (parseInt(b.getAttribute('data-id')) || 0));
+        }
+
+        gridProdutos.innerHTML = '';
+        produtosReordenados.forEach(produto => {
+            gridProdutos.appendChild(produto);
+        });
+        window.filtrarProdutos();
+    }
 
     if (sortSelect && gridProdutos) {
-        sortSelect.addEventListener('change', () => {
-            const listaProdutos = Array.from(document.querySelectorAll('.product-grid .product-card'));
-            const valor = sortSelect.value;
-            let produtosReordenados = [...listaProdutos];
+        sortSelect.addEventListener('change', applyProductSorting);
+    }
 
-            if (valor === 'menor') {
-                produtosReordenados.sort((a, b) => parseFloat(a.getAttribute('data-preco')) - parseFloat(b.getAttribute('data-preco')));
-            } else if (valor === 'maior') {
-                produtosReordenados.sort((a, b) => parseFloat(b.getAttribute('data-preco')) - parseFloat(a.getAttribute('data-preco')));
-            } else {
-                produtosReordenados.sort((a, b) => (parseInt(a.getAttribute('data-id')) || 0) - (parseInt(b.getAttribute('data-id')) || 0));
-            }
-
-            gridProdutos.innerHTML = '';
-            produtosReordenados.forEach(produto => {
-                gridProdutos.appendChild(produto);
-            });
-            window.filtrarProdutos();
+    if (clearSortBtn && sortSelect) {
+        clearSortBtn.addEventListener('click', () => {
+            sortSelect.value = 'padrao';
+            applyProductSorting();
         });
     }
 });

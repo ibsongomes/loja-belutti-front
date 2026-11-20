@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('authToken');
     
     if (!token) {
-        window.location.assign('../../pages/auth/login.html');
+        window.location.assign('../auth/login.html');
         return;
     }
 
@@ -93,6 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Ir para o Painel Administrador
+    const adminPanelBtn = document.getElementById('adminPanelBtn');
+    if (adminPanelBtn) {
+        adminPanelBtn.addEventListener('click', () => {
+            window.location.assign('./admin.html');
+        });
+    }
+
     // Sair da conta
     document.getElementById('logoutAccountBtn').addEventListener('click', () => {
         localStorage.removeItem('authToken');
@@ -104,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('switchAccountBtn').addEventListener('click', () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userName');
-        window.location.assign('../../pages/auth/login.html');
+        window.location.assign('../auth/login.html');
     });
 
     // Excluir própria conta com modal na tela
@@ -124,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             localStorage.removeItem('authToken');
                             localStorage.removeItem('userName');
                             showToastMessage('Sua conta foi excluída.');
-                            setTimeout(() => window.location.assign(window.location.pathname.includes('/pages/') ? '../../index.html' : './index.html'), 1200);
+                            setTimeout(() => window.location.assign('../../index.html'), 1200);
                         } else {
                             const data = await res.json();
                             showToastMessage(data.error || 'Erro ao excluir conta.', true);
@@ -190,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadUserProfile(token);
     loadUserOrders(token);
+    loadUserFavorites(token);
 
     // Salvar edição de cadastro
     document.getElementById('updateProfileForm').addEventListener('submit', async (e) => {
@@ -261,10 +270,9 @@ async function loadUserProfile(token) {
         if (!res.ok) return;
         const user = await res.json();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        if (user.is_admin && !urlParams.get('cliente')) {
-            window.location.assign('./admin.html');
-            return;
+        if (user.is_admin) {
+            const adminPanelItem = document.getElementById('adminPanelItem');
+            if (adminPanelItem) adminPanelItem.style.display = 'block';
         }
 
         document.getElementById('sidebarGreeting').innerText = `Olá, ${user.name.split(' ')[0]}`;
@@ -289,6 +297,73 @@ async function loadUserProfile(token) {
         }
     } catch (err) {
         console.error('Erro ao carregar perfil:', err);
+    }
+}
+
+async function loadUserFavorites(token) {
+    const container = document.getElementById('favoritesList');
+    if (!container) return;
+
+    try {
+        const res = await fetch('/favorites', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const favorites = await res.json();
+
+        if (!favorites || favorites.length === 0) {
+            container.innerHTML = '<p style="color: #666; grid-column: 1 / -1;">Você ainda não favoritou nenhuma peça na Belutti.</p>';
+            return;
+        }
+
+        container.innerHTML = favorites.map(prod => {
+            const priceNum = parseFloat(prod.price);
+            const priceFormatted = priceNum.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const safeName = prod.name.replace(/'/g, "\\'");
+            const outOfStock = prod.stock <= 0;
+
+            return `
+                <div class="fav-card">
+                    <img src="${prod.image}" alt="${prod.name}">
+                    <div class="fav-card-body">
+                        <div>
+                            <p class="fav-card-title">${prod.name}</p>
+                            <div class="fav-card-price" style="margin-top: 4px;">${priceFormatted}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            ${outOfStock
+                                ? `<button class="btn-primary" disabled style="background:#999; cursor:not-allowed; padding:8px; font-size:13px;">Esgotado</button>`
+                                : `<button class="btn-primary" onclick="addToCart({ name: '${safeName}', price: ${priceNum}, image: '${prod.image}', maxStock: ${prod.stock} })" style="padding:8px; font-size:13px;">Adicionar à Sacola</button>`
+                            }
+                            <button onclick="removeFavoriteFromAccount(${prod.id})" style="background:#fff; color:#c0392b; border:1px solid #c0392b; border-radius:4px; padding:6px; font-size:12px; font-weight:bold; cursor:pointer;">
+                                Remover dos Favoritos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } catch (err) {
+        container.innerHTML = '<p style="color: #c0392b;">Erro ao carregar favoritos.</p>';
+    }
+}
+
+async function removeFavoriteFromAccount(productId) {
+    const token = localStorage.getItem('authToken');
+    try {
+        const res = await fetch('/favorites/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ productId })
+        });
+        if (res.ok) {
+            showToastMessage('Produto removido dos favoritos.');
+            loadUserFavorites(token);
+        }
+    } catch (err) {
+        showToastMessage('Erro ao remover favorito.', true);
     }
 }
 

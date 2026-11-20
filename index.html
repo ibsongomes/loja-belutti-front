@@ -29,45 +29,45 @@
             </nav>
             
             <!-- Barra de Busca -->
-<div class="search-bar" style="position: relative;">
-    <input type="text" id="searchInput" placeholder="O que você está buscando?" autocomplete="off">
-    <button id="searchBtn"><i class="fas fa-search"></i></button>
-    
-    <!-- Dropdown de Termos Mais Pesquisados -->
-    <div id="searchDropdown" class="search-dropdown">
-        <div class="search-dropdown-header">
-            <i class="fas fa-fire"></i> Termos mais pesquisados
-        </div>
-        <div class="trending-tags" id="trendingTags">
-            <button type="button" class="trending-tag" data-term="Camisa Manga Longa">Camisa Manga Longa</button>
-            <button type="button" class="trending-tag" data-term="Camisa em Linho">Camisa em Linho</button>
-            <button type="button" class="trending-tag" data-term="Moletom">Casaco Moletom</button>
-            <button type="button" class="trending-tag" data-term="Baggy">Calça Baggy</button>
-            <button type="button" class="trending-tag" data-term="Regata">Regata Canelada</button>
-        </div>
-    </div>
-</div>
+            <div class="search-bar" style="position: relative;">
+                <input type="text" id="searchInput" placeholder="O que você está buscando?" autocomplete="off">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+                
+                <!-- Dropdown de Termos Mais Pesquisados -->
+                <div id="searchDropdown" class="search-dropdown">
+                    <div class="search-dropdown-header">
+                        <i class="fas fa-fire"></i> Termos mais pesquisados
+                    </div>
+                    <div class="trending-tags" id="trendingTags">
+                        <button type="button" class="trending-tag" data-term="Camisa Manga Longa">Camisa Manga Longa</button>
+                        <button type="button" class="trending-tag" data-term="Camisa em Linho">Camisa em Linho</button>
+                        <button type="button" class="trending-tag" data-term="Moletom">Casaco Moletom</button>
+                        <button type="button" class="trending-tag" data-term="Baggy">Calça Baggy</button>
+                        <button type="button" class="trending-tag" data-term="Regata">Regata Canelada</button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Ações do Usuário (Login e Carrinho) -->
-            <!-- Ações do Usuário (Login e Carrinho) -->
-<div class="header-actions">
-    <!-- ADICIONE O ID "userMenu" NESTA DIV ABAIXO -->
-    <div class="action-item" id="userMenu">
-        <i class="far fa-user"></i>
-        <div>
-            <a href="./pages/auth/login.html"> <strong>Login</strong> /<br> </a>
-            <a href="./pages/auth/cadastro.html"> <span style="font-size: 12px;">Cadastre-se</span> </a>
-        </div>
-    </div>
-    
-    <div class="action-item" id="cartMenu" style="cursor: pointer;">
-    <i class="fas fa-shopping-bag"></i>
-    <div>
-        <strong id="cartCount">Carrinho (0)</strong><br>
-        <span id="cartTotal" style="font-size: 12px;">R$0,00</span>
-    </div>
-</div>
-</div>
+            <div class="header-actions">
+                <div class="action-item" id="userMenu">
+                    <a href="./pages/auth/login.html" style="text-decoration: none; color: inherit; display: flex; align-items: center;" title="Entrar na conta">
+                        <i class="far fa-user"></i>
+                    </a>
+                    <div>
+                        <a href="./pages/auth/login.html"> <strong>Login</strong> /<br> </a>
+                        <a href="./pages/auth/cadastro.html"> <span style="font-size: 12px;">Cadastre-se</span> </a>
+                    </div>
+                </div>
+                
+                <div class="action-item" id="cartMenu" style="cursor: pointer;">
+                    <i class="fas fa-shopping-bag"></i>
+                    <div>
+                        <strong id="cartCount">Carrinho (0)</strong><br>
+                        <span id="cartTotal" style="font-size: 12px;">R$0,00</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -213,7 +213,6 @@
                     <li><a href="#" class="open-sidebar" data-target="privacidade">Política de Privacidade</a></li>
                     <li><a href="#" class="open-sidebar" data-target="termos">Termos de Uso</a></li>
                     <li><a href="#" class="open-sidebar" data-target="trocas">Trocas e Devoluções</a></li>
-                    <li><a href="#" class="open-sidebar" data-target="prazos">Prazos de Entrega</a></li>
                     <li><a href="#" class="open-sidebar" data-target="faq">Perguntas Frequentes (FAQ)</a></li>
                 </ul>
             </div>
@@ -270,7 +269,7 @@
     </div>
 
     <!-- Scripts -->
-     <script src="./js/core/config.js"></script>
+    <script src="./js/core/config.js"></script>
     <script src="./js/core/main.js"></script>
     <script src="./js/core/auth.js"></script>
     <script src="./js/core/cart.js"></script>
