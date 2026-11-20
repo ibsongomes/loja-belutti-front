@@ -4,7 +4,6 @@ let userFavoriteIds = new Set();
 function parseProductAttributes(prod) {
     const imgFile = (prod.image || '').split('/').pop().replace(/\.[^/.]+$/, '').toLowerCase();
 
-    // Casos específicos dos destaques iniciais
     if (imgFile === 'modelo-2' || imgFile.includes('oversized')) {
         return { color: 'bege', model: 'oversized' };
     }
@@ -15,7 +14,6 @@ function parseProductAttributes(prod) {
         return { color: 'preto', model: 'moletom' };
     }
 
-    // Padrão "camisa-cor-modelo" (ou "camisa_cor-modelo")
     const normalized = imgFile.replace(/_/g, '-');
     const colorMap = {
         'preto': 'preto',
@@ -159,7 +157,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        await loadUserFavoritesIds();
+        if (!isHomePage) {
+            await loadUserFavoritesIds();
+        }
 
         const res = await fetch(apiUrl);
         if (!res.ok) throw new Error('Falha ao carregar catálogo');
@@ -167,14 +167,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         renderProducts(products, productGrid, isHomePage);
 
-        // Inicializa faixa de preço e filtros dinâmicos com base nos produtos reais carregados
         if (typeof window.initDynamicCatalogFilters === 'function') {
             window.initDynamicCatalogFilters(products);
         } else if (typeof window.filtrarProdutos === 'function') {
             window.filtrarProdutos();
         }
 
-        // Se veio ?busca=... na URL, aplica o filtro do search.js após renderizar os cards
         const urlParams = new URLSearchParams(window.location.search);
         const queryParam = urlParams.get('busca');
         if (queryParam && typeof filterCatalogProducts === 'function') {
@@ -205,17 +203,11 @@ function renderProducts(products, container, isHomePage) {
             ? `<button class="btn-primary" disabled style="background:#999; cursor:not-allowed; width:100%; margin-top:10px;">Esgotado</button>`
             : `<button class="btn-primary" onclick="addToCart({ name: '${safeName}', price: ${priceNum}, image: '${prod.image}', maxStock: ${prod.stock} })" style="width:100%; margin-top:10px;">Comprar</button>`;
 
-        const heartBtnHtml = `
-            <button type="button" class="btn-wishlist" onclick="toggleProductFavorite(${prod.id}, this)" title="Favoritar produto">
-                <i class="${isFav ? 'fas' : 'far'} fa-heart" style="${isFav ? 'color: #c0392b;' : ''}"></i>
-            </button>
-        `;
-
+        // Tela inicial: sem corações de favoritar
         if (isHomePage) {
             return `
                 <div class="product-card" data-id="${prod.id}" data-sold="${prod.soldCount || 0}" data-cor="${attrs.color}" data-preco="${priceNum}" data-modelagem="${attrs.model}">
                     <div class="product-image">
-                        ${heartBtnHtml}
                         <img src="${prod.image}" alt="${prod.name}">
                     </div>
                     <div class="product-info">
@@ -228,6 +220,13 @@ function renderProducts(products, container, isHomePage) {
                 </div>
             `;
         }
+
+        // Páginas de catálogo (camisas.html / moletons.html): com botão de favoritar
+        const heartBtnHtml = `
+            <button type="button" class="btn-wishlist" onclick="toggleProductFavorite(${prod.id}, this)" title="Favoritar produto">
+                <i class="${isFav ? 'fas' : 'far'} fa-heart" style="${isFav ? 'color: #c0392b;' : ''}"></i>
+            </button>
+        `;
 
         return `
             <div class="product-card" data-id="${prod.id}" data-sold="${prod.soldCount || 0}" data-cor="${attrs.color}" data-preco="${priceNum}" data-modelagem="${attrs.model}">

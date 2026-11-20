@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchDropdown = document.getElementById('searchDropdown');
     const trendingTags = document.querySelectorAll('.trending-tag');
 
-    // 1. Se a página abriu com ?busca=... na URL, aplica o filtro imediatamente
+    // 1. Se a página abriu com ?busca=... na URL, preenche o campo e aplica o filtro
     const urlParams = new URLSearchParams(window.location.search);
     const queryParam = urlParams.get('busca');
     if (queryParam) {
@@ -69,6 +69,18 @@ function normalizeText(text) {
         .replace(/[\u0300-\u036f]/g, '');
 }
 
+// Resolve o caminho relativo correto (funciona tanto no Localhost quanto no GitHub Pages)
+function getProductPagePath(pageFileName) {
+    const pathname = window.location.pathname;
+    if (pathname.includes('/pages/produtos/')) {
+        return `./${pageFileName}`;
+    }
+    if (pathname.includes('/pages/')) {
+        return `../produtos/${pageFileName}`;
+    }
+    return `./pages/produtos/${pageFileName}`;
+}
+
 // Decide para qual página da loja enviar o cliente com base no que ele digitou
 function routeAndSearch(rawTerm) {
     const cleanTerm = rawTerm.trim();
@@ -81,13 +93,13 @@ function routeAndSearch(rawTerm) {
     const isMoletom = normalized.includes('moletom') || normalized.includes('casaco') || normalized.includes('blusa');
     
     // Palavras-chave que levam para camisas.html
-    const isCamisa = normalized.includes('camisa') || normalized.includes('linho') || normalized.includes('manga') || normalized.includes('oversized') || normalized.includes('polo');
+    const isCamisa = normalized.includes('camisa') || normalized.includes('linho') || normalized.includes('manga') || normalized.includes('oversized') || normalized.includes('regata') || normalized.includes('tricot') || normalized.includes('cotton') || normalized.includes('canelada');
 
     if (isMoletom) {
         if (currentPage.includes('moletons.html')) {
             filterCatalogProducts(cleanTerm);
         } else {
-            window.location.assign(`/pages/produtos/moletons.html?busca=${encodeURIComponent(cleanTerm)}`);
+            window.location.assign(`${getProductPagePath('moletons.html')}?busca=${encodeURIComponent(cleanTerm)}`);
         }
         return;
     }
@@ -96,16 +108,16 @@ function routeAndSearch(rawTerm) {
         if (currentPage.includes('camisas.html')) {
             filterCatalogProducts(cleanTerm);
         } else {
-            window.location.assign(`/pages/produtos/camisas.html?busca=${encodeURIComponent(cleanTerm)}`);
+            window.location.assign(`${getProductPagePath('camisas.html')}?busca=${encodeURIComponent(cleanTerm)}`);
         }
         return;
     }
 
-    // Fallback padrão: manda para camisas.html caso não identifique outra categoria
+    // Fallback padrão: manda para camisas.html
     if (currentPage.includes('camisas.html')) {
         filterCatalogProducts(cleanTerm);
     } else {
-        window.location.assign(`/pages/produtos/camisas.html?busca=${encodeURIComponent(cleanTerm)}`);
+        window.location.assign(`${getProductPagePath('camisas.html')}?busca=${encodeURIComponent(cleanTerm)}`);
     }
 }
 
@@ -123,17 +135,15 @@ function filterCatalogProducts(rawTerm) {
         const matchesAllWords = terms.every(word => cardText.includes(word));
 
         if (matchesAllWords) {
-            card.style.display = '';
+            card.style.display = 'flex';
             visibleCount++;
         } else {
             card.style.display = 'none';
         }
     });
 
-    const allElements = document.querySelectorAll('p, span, div');
-    allElements.forEach(el => {
-        if (el.children.length === 0 && el.innerText.includes('Exibindo:') && el.innerText.includes('resultados')) {
-            el.innerText = `Exibindo: ${visibleCount} resultado(s) para "${rawTerm.trim()}"`;
-        }
-    });
+    const resultCount = document.getElementById('resultado-count');
+    if (resultCount) {
+        resultCount.textContent = `Exibindo: ${visibleCount} resultado${visibleCount !== 1 ? 's' : ''} para "${rawTerm.trim()}"`;
+    }
 }
