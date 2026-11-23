@@ -1,4 +1,6 @@
 let cart = JSON.parse(localStorage.getItem('beluttiCart')) || [];
+let selectedPaymentMethod = localStorage.getItem('beluttiPaymentMethod') || 'pix';
+let selectedInstallments = parseInt(localStorage.getItem('beluttiInstallments')) || 1;
 
 document.addEventListener('DOMContentLoaded', () => {
     updateCartHeader();
@@ -70,6 +72,28 @@ function updateCartHeader() {
     if (totalEl) totalEl.innerText = totalPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+window.selectPaymentMethod = function(method) {
+    selectedPaymentMethod = method;
+    localStorage.setItem('beluttiPaymentMethod', method);
+    openCartSidebar();
+};
+
+window.selectInstallments = function(installments) {
+    selectedInstallments = parseInt(installments) || 1;
+    localStorage.setItem('beluttiInstallments', String(selectedInstallments));
+};
+
+function getPaymentMethodLabel(method, installments, total) {
+    if (method === 'cartao') {
+        const parcelValue = (total / installments).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        return `Cartão de Crédito (${installments}x de ${parcelValue} sem juros)`;
+    }
+    if (method === 'boleto') {
+        return 'Boleto Bancário (à vista)';
+    }
+    return 'Pix (Aprovação imediata)';
+}
+
 function openCartSidebar() {
     const overlay = document.getElementById('sidebarOverlay');
     const panel = document.getElementById('sidebarPanel');
@@ -89,7 +113,10 @@ function openCartSidebar() {
         cart.forEach((item, index) => {
             const subtotal = item.price * item.quantity;
             total += subtotal;
-            const sizeBadge = item.size ? `<span style="display:inline-block; font-size:11px; color:#555; background:#f2efe9; padding:2px 7px; border-radius:3px; margin-bottom:4px;">Tamanho: <strong>${item.size}</strong></span><br>` : '';
+            const sizeBadge = item.size
+                ? `<span style="display:inline-block; font-size:11px; color:#555; background:#f2efe9; padding:2px 7px; border-radius:3px; margin-bottom:4px;">Tamanho: <strong>${item.size}</strong></span><br>`
+                : '';
+
             html += `
                 <div style="display:flex; gap:12px; align-items:center; border-bottom:1px solid #eee; padding-bottom:12px;">
                     <img src="${item.image}" alt="${item.name}" style="width:60px; height:75px; object-fit:cover; border-radius:4px;">
@@ -107,8 +134,67 @@ function openCartSidebar() {
             `;
         });
 
+        const optionStyle = (method) => {
+            const active = selectedPaymentMethod === method;
+            return `display:flex; align-items:center; gap:10px; padding:10px 12px; border:1.5px solid ${active ? 'rgb(101, 54, 7)' : '#dcd7ce'}; background:${active ? '#faf6f0' : '#fff'}; border-radius:6px; cursor:pointer; font-size:13px; transition:all 0.2s;`;
+        };
+
+        const p1 = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const p2 = (total / 2).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const p3 = (total / 3).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        const installmentsHtml = selectedPaymentMethod === 'cartao'
+            ? `
+                <div style="margin-top:8px; padding-left:4px;">
+                    <label style="display:block; font-size:12px; color:#555; margin-bottom:4px;">Parcelamento:</label>
+                    <select id="cartInstallmentsSelect" onchange="selectInstallments(this.value)" style="width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:4px; font-size:13px; background:#fff; color:#1A1A1A;">
+                        <option value="1" ${selectedInstallments === 1 ? 'selected' : ''}>1x de ${p1} sem juros</option>
+                        <option value="2" ${selectedInstallments === 2 ? 'selected' : ''}>2x de ${p2} sem juros</option>
+                        <option value="3" ${selectedInstallments === 3 ? 'selected' : ''}>3x de ${p3} sem juros</option>
+                    </select>
+                </div>
+            `
+            : '';
+
         html += `
-            <div style="margin-top:15px; padding-top:15px; border-top:2px solid #1A1A1A;">
+            <div style="margin-top:10px; padding-top:14px; border-top:1px solid #e5e0d8;">
+                <p style="font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#1A1A1A; margin:0 0 10px 0;">
+                    Forma de Pagamento
+                </p>
+
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label onclick="selectPaymentMethod('pix')" style="${optionStyle('pix')}">
+                        <input type="radio" name="paymentMethod" value="pix" ${selectedPaymentMethod === 'pix' ? 'checked' : ''} style="accent-color: rgb(101, 54, 7);">
+                        <i class="fab fa-pix" style="font-size:16px; color:#2e7d32;"></i>
+                        <div style="flex:1;">
+                            <strong style="color:#1A1A1A;">Pix</strong>
+                            <div style="font-size:11px; color:#666;">Aprovação imediata</div>
+                        </div>
+                    </label>
+
+                    <label onclick="selectPaymentMethod('cartao')" style="${optionStyle('cartao')}">
+                        <input type="radio" name="paymentMethod" value="cartao" ${selectedPaymentMethod === 'cartao' ? 'checked' : ''} style="accent-color: rgb(101, 54, 7);">
+                        <i class="far fa-credit-card" style="font-size:16px; color:rgb(101, 54, 7);"></i>
+                        <div style="flex:1;">
+                            <strong style="color:#1A1A1A;">Cartão de Crédito</strong>
+                            <div style="font-size:11px; color:#666;">Até 3x sem juros</div>
+                        </div>
+                    </label>
+
+                    ${installmentsHtml}
+
+                    <label onclick="selectPaymentMethod('boleto')" style="${optionStyle('boleto')}">
+                        <input type="radio" name="paymentMethod" value="boleto" ${selectedPaymentMethod === 'boleto' ? 'checked' : ''} style="accent-color: rgb(101, 54, 7);">
+                        <i class="fas fa-barcode" style="font-size:16px; color:#333;"></i>
+                        <div style="flex:1;">
+                            <strong style="color:#1A1A1A;">Boleto Bancário</strong>
+                            <div style="font-size:11px; color:#666;">Compensação em até 2 dias úteis</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top:12px; padding-top:15px; border-top:2px solid #1A1A1A;">
                 <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:bold; margin-bottom:15px;">
                     <span>Total:</span>
                     <span>${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
@@ -134,7 +220,13 @@ async function checkoutOrder() {
         return;
     }
 
+    if (!selectedPaymentMethod) {
+        alert('Por favor, selecione uma forma de pagamento antes de finalizar a compra.');
+        return;
+    }
+
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const paymentLabel = getPaymentMethodLabel(selectedPaymentMethod, selectedInstallments, total);
 
     try {
         const response = await fetch('/orders', {
@@ -143,7 +235,11 @@ async function checkoutOrder() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ items: cart, total })
+            body: JSON.stringify({
+                items: cart,
+                total,
+                paymentMethod: paymentLabel
+            })
         });
 
         const data = await response.json();
@@ -155,6 +251,9 @@ async function checkoutOrder() {
                 <div style="text-align:center; padding:40px 15px;">
                     <i class="fas fa-check-circle" style="font-size:52px; color:#2e7d32; margin-bottom:15px;"></i>
                     <h3 style="color:#1A1A1A; margin-bottom:10px;">Pedido #${data.orderId} Confirmado!</h3>
+                    <p style="color:#444; font-size:13px; background:#f8f5f0; padding:10px; border-radius:6px; margin-bottom:15px;">
+                        <strong>Pagamento:</strong> ${paymentLabel}
+                    </p>
                     <p style="color:#666; font-size:14px; line-height:1.5; margin-bottom:25px;">
                         Obrigado por comprar na Belutti. Seu pedido já foi registrado em nossa base.
                     </p>
