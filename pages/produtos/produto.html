@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto | Belutti</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/catalogo.css">
+    <link rel="stylesheet" href="../../css/produto.css">
+</head>
+<body>
+
+    <!-- ==========================================
+         CABEÇALHO PRINCIPAL
+    =========================================== -->
+    <header>
+        <div class="header-main">
+            <a href="../../index.html" class="logo">BELUTTI</a>
+
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="../../index.html">Início</a></li>
+                    <li><a href="./camisas.html">Camisas</a></li>
+                    <li><a href="./moletons.html">Moletons</a></li>
+                    <li><a href="#">Calças</a></li>
+                    <li><a href="#">Acessórios</a></li>
+                </ul>
+            </nav>
+
+            <div class="search-bar" style="position: relative;">
+                <input type="text" id="searchInput" placeholder="O que você está buscando?" autocomplete="off">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+                
+                <div id="searchDropdown" class="search-dropdown">
+                    <div class="search-dropdown-header">
+                        <i class="fas fa-fire"></i> Termos mais pesquisados
+                    </div>
+                    <div class="trending-tags" id="trendingTags">
+                        <button type="button" class="trending-tag" data-term="Camisa Manga Longa">Camisa Manga Longa</button>
+                        <button type="button" class="trending-tag" data-term="Camisa em Linho">Camisa em Linho</button>
+                        <button type="button" class="trending-tag" data-term="Moletom">Casaco Moletom</button>
+                        <button type="button" class="trending-tag" data-term="Baggy">Calça Baggy</button>
+                        <button type="button" class="trending-tag" data-term="Regata">Regata Canelada</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="action-item" id="userMenu">
+                    <a href="../auth/login.html" style="text-decoration: none; color: inherit; display: flex; align-items: center;" title="Entrar na conta">
+                        <i class="far fa-user"></i>
+                    </a>
+                    <div>
+                        <a href="../auth/login.html"> <strong>Login</strong> /<br> </a>
+                        <a href="../auth/cadastro.html"> <span style="font-size: 12px;">Cadastre-se</span> </a>
+                    </div>
+                </div>
+                
+                <div class="action-item" id="cartMenu" style="cursor: pointer;">
+                    <i class="fas fa-shopping-bag"></i>
+                    <div>
+                        <strong id="cartCount">Carrinho (0)</strong><br>
+                        <span id="cartTotal" style="font-size: 12px;">R$0,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         CONTEÚDO PRINCIPAL DO PRODUTO (PDP)
+    =========================================== -->
+    <main class="pdp-wrapper">
+        <!-- Breadcrumb -->
+        <nav class="pdp-breadcrumb" id="pdpBreadcrumb">
+            <a href="../../index.html">Home</a>
+            <span>&gt;</span>
+            <a href="./camisas.html" id="breadcrumbCategory">Camisas</a>
+            <span>&gt;</span>
+            <strong id="breadcrumbProductName">Carregando...</strong>
+        </nav>
+
+        <!-- Container carregado dinamicamente pelo produto.js -->
+        <div id="pdpContent" class="pdp-grid">
+            <p style="grid-column: 1 / -1; text-align: center; padding: 60px 0; color: #666;">Carregando detalhes da peça...</p>
+        </div>
+    </main>
+
+    <!-- ==========================================
+         RODAPÉ (FOOTER)
+    =========================================== -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-col brand-col">
+                <h2>BELUTTI</h2>
+                <p>A Belutti surgiu com o propósito de levar moda masculina com estilo, atitude e personalidade. Reunimos peças que combinam conforto e versatilidade para acompanhar você em diferentes momentos.</p>
+                <p><strong>BELUTTI — Vista seu estilo.</strong></p>
+            </div>
+
+            <div class="footer-col links-col">
+                <h3>Institucional</h3>
+                <ul>
+                    <li><a href="#" class="open-sidebar" data-target="quem-somos">Quem Somos</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="privacidade">Política de Privacidade</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="termos">Termos de Uso</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="trocas">Trocas e Devoluções</a></li>
+                    <li><a href="#" class="open-sidebar" data-target="faq">Perguntas Frequentes (FAQ)</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col contact-col">
+                <h3>Fale Conosco</h3>
+                <p>Tem alguma dúvida, sugestão ou precisa de ajuda? Estamos aqui para ajudar!</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="E-mail">
+                    <button>Enviar</button>
+                </div>
+            </div>
+
+            <div class="footer-col security-col">
+                <h3>Formas de Pagamento</h3>
+                <div class="payment-icons">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-pix"></i>
+                </div>
+                <h3 style="margin-top: 25px;">Segurança</h3>
+                <div class="security-badge">
+                    <i class="fas fa-lock"></i> <span>Site Seguro - SSL</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>criado com Nuvemshop | Copyright Belutti - 2026. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- ==========================================
+         PAINEL LATERAL (OFFCANVAS)
+    =========================================== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-panel" id="sidebarPanel">
+        <div class="sidebar-header">
+            <h3 id="sidebarTitle">Título</h3>
+            <button class="sidebar-close" id="sidebarClose">&times;</button>
+        </div>
+        <div class="sidebar-content" id="sidebarContent"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/core/config.js"></script>
+    <script src="../../js/core/main.js"></script>
+    <script src="../../js/core/auth.js"></script>
+    <script src="../../js/core/cart.js"></script>
+    <script src="../../js/core/search.js"></script>
+    <script src="../../js/core/produto.js"></script>
+</body>
+</html>

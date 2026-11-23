@@ -11,15 +11,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function addToCart(product) {
-    const existingItem = cart.find(item => item.name === product.name);
+    const selectedSize = product.size || 'M';
+    const existingItem = cart.find(item => item.name === product.name && (item.size || 'M') === selectedSize);
+
+    // Soma total desse produto no carrinho (independentemente do tamanho) para respeitar o estoque
+    const totalSameProductInCart = cart
+        .filter(item => item.name === product.name)
+        .reduce((sum, item) => sum + item.quantity, 0);
+
+    if (product.maxStock && totalSameProductInCart + 1 > product.maxStock) {
+        alert(`Quantidade máxima disponível em estoque atingida (${product.maxStock} un.).`);
+        return;
+    }
+
     if (existingItem) {
-        if (product.maxStock && existingItem.quantity + 1 > product.maxStock) {
-            alert(`Quantidade máxima disponível em estoque atingida (${product.maxStock} un.).`);
-            return;
-        }
         existingItem.quantity += 1;
     } else {
-        cart.push({ ...product, quantity: 1 });
+        cart.push({ ...product, size: selectedSize, quantity: 1 });
     }
     saveAndRefreshCart();
     openCartSidebar();
@@ -27,9 +35,15 @@ function addToCart(product) {
 
 function changeQuantity(index, delta) {
     const item = cart[index];
-    if (delta > 0 && item.maxStock && item.quantity + delta > item.maxStock) {
-        alert(`Quantidade máxima disponível em estoque atingida (${item.maxStock} un.).`);
-        return;
+    if (delta > 0 && item.maxStock) {
+        const totalSameProductInCart = cart
+            .filter(i => i.name === item.name)
+            .reduce((sum, i) => sum + i.quantity, 0);
+
+        if (totalSameProductInCart + delta > item.maxStock) {
+            alert(`Quantidade máxima disponível em estoque atingida (${item.maxStock} un.).`);
+            return;
+        }
     }
 
     item.quantity += delta;
@@ -75,11 +89,13 @@ function openCartSidebar() {
         cart.forEach((item, index) => {
             const subtotal = item.price * item.quantity;
             total += subtotal;
+            const sizeBadge = item.size ? `<span style="display:inline-block; font-size:11px; color:#555; background:#f2efe9; padding:2px 7px; border-radius:3px; margin-bottom:4px;">Tamanho: <strong>${item.size}</strong></span><br>` : '';
             html += `
                 <div style="display:flex; gap:12px; align-items:center; border-bottom:1px solid #eee; padding-bottom:12px;">
                     <img src="${item.image}" alt="${item.name}" style="width:60px; height:75px; object-fit:cover; border-radius:4px;">
                     <div style="flex:1;">
                         <h4 style="margin:0 0 4px 0; font-size:14px; color:#1A1A1A;">${item.name}</h4>
+                        ${sizeBadge}
                         <span style="font-size:13px; color:#555;">${item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                         <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
                             <button onclick="changeQuantity(${index}, -1)" style="width:24px; height:24px; border:1px solid #ccc; background:#fff; cursor:pointer;">-</button>
@@ -113,7 +129,6 @@ function openCartSidebar() {
 async function checkoutOrder() {
     const token = localStorage.getItem('authToken');
 
-    // Bloqueia a compra se não estiver logado e manda para a pasta pages/auth/
     if (!token) {
         window.location.assign(window.location.pathname.includes('/pages/') ? '../auth/login.html' : './pages/auth/login.html');
         return;

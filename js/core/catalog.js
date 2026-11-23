@@ -1,6 +1,5 @@
 let userFavoriteIds = new Set();
 
-// Extrai cor e modelo a partir do nome da imagem no padrão "camisa-cor-modelo"
 function parseProductAttributes(prod) {
     const imgFile = (prod.image || '').split('/').pop().replace(/\.[^/.]+$/, '').toLowerCase();
 
@@ -47,6 +46,17 @@ function parseProductAttributes(prod) {
     else if (normalized.includes('regata')) detectedModel = 'regata';
 
     return { color: detectedColor, model: detectedModel };
+}
+
+function getProductDetailUrl(productId) {
+    const pathname = window.location.pathname;
+    if (pathname.includes('/pages/produtos/')) {
+        return `./produto.html?id=${productId}`;
+    }
+    if (pathname.includes('/pages/')) {
+        return `../produtos/produto.html?id=${productId}`;
+    }
+    return `./pages/produtos/produto.html?id=${productId}`;
 }
 
 function showLoginRequiredModalForWishlist() {
@@ -97,7 +107,11 @@ async function loadUserFavoritesIds() {
     }
 }
 
-window.toggleProductFavorite = async function(productId, btnElement) {
+window.toggleProductFavorite = async function(productId, btnElement, event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
     const token = localStorage.getItem('authToken');
     if (!token) {
         showLoginRequiredModalForWishlist();
@@ -196,6 +210,7 @@ function renderProducts(products, container, isHomePage) {
         const outOfStock = prod.stock <= 0;
         const attrs = parseProductAttributes(prod);
         const isFav = userFavoriteIds.has(prod.id);
+        const detailUrl = getProductDetailUrl(prod.id);
 
         const safeName = prod.name.replace(/'/g, "\\'");
 
@@ -203,15 +218,15 @@ function renderProducts(products, container, isHomePage) {
             ? `<button class="btn-primary" disabled style="background:#999; cursor:not-allowed; width:100%; margin-top:10px;">Esgotado</button>`
             : `<button class="btn-primary" onclick="addToCart({ name: '${safeName}', price: ${priceNum}, image: '${prod.image}', maxStock: ${prod.stock} })" style="width:100%; margin-top:10px;">Comprar</button>`;
 
-        // Tela inicial: sem corações de favoritar
+        // Tela inicial: sem corações de favoritar, com link para detalhes do produto
         if (isHomePage) {
             return `
                 <div class="product-card" data-id="${prod.id}" data-sold="${prod.soldCount || 0}" data-cor="${attrs.color}" data-preco="${priceNum}" data-modelagem="${attrs.model}">
-                    <div class="product-image">
+                    <a href="${detailUrl}" class="product-image" style="display:block;">
                         <img src="${prod.image}" alt="${prod.name}">
-                    </div>
+                    </a>
                     <div class="product-info">
-                        <h3>${prod.name}</h3>
+                        <h3><a href="${detailUrl}">${prod.name}</a></h3>
                         <div>
                             <span class="price-current">${priceFormatted}</span>
                         </div>
@@ -221,9 +236,9 @@ function renderProducts(products, container, isHomePage) {
             `;
         }
 
-        // Páginas de catálogo (camisas.html / moletons.html): com botão de favoritar
+        // Páginas de catálogo: com botão de favoritar e link para detalhes do produto
         const heartBtnHtml = `
-            <button type="button" class="btn-wishlist" onclick="toggleProductFavorite(${prod.id}, this)" title="Favoritar produto">
+            <button type="button" class="btn-wishlist" onclick="toggleProductFavorite(${prod.id}, this, event)" title="Favoritar produto">
                 <i class="${isFav ? 'fas' : 'far'} fa-heart" style="${isFav ? 'color: #c0392b;' : ''}"></i>
             </button>
         `;
@@ -232,10 +247,12 @@ function renderProducts(products, container, isHomePage) {
             <div class="product-card" data-id="${prod.id}" data-sold="${prod.soldCount || 0}" data-cor="${attrs.color}" data-preco="${priceNum}" data-modelagem="${attrs.model}">
                 <div class="product-image">
                     ${heartBtnHtml}
-                    <img src="${prod.image}" alt="${prod.name}">
+                    <a href="${detailUrl}" style="display:block; width:100%; height:100%;">
+                        <img src="${prod.image}" alt="${prod.name}">
+                    </a>
                 </div>
                 <div class="product-info">
-                    <h3>${prod.name}</h3>
+                    <h3><a href="${detailUrl}">${prod.name}</a></h3>
                     <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
                     <div class="price-current">${priceFormatted}</div>
                     <div class="installment">ou 3x de ${installmentFormatted} sem juros</div>
